@@ -31,7 +31,7 @@ jobs:
         if: github.event_name == 'schedule'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.sha }}
+          tag_name: ${{ github.ref }}
           name: '每周自动构建'
           body: 每周自动构建
           draft: false
