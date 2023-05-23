@@ -28,7 +28,7 @@ jobs:
           path: ./artifacts/*.gz
 
       - name: if_schedule
-        if: github.event.schedule
+        if: github.event_name == 'schedule'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.sha }}
@@ -39,7 +39,7 @@ jobs:
           files: ./artifacts/*.tar.gz
 
       - name: if_push
-        if: github.event.push
+        if: github.event_name == 'push'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
