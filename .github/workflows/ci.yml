@@ -21,6 +21,7 @@ jobs:
           mkdir -p ./artifacts
           tar -czvf ./artifacts/test.img.tar.gz ./*.jpg
           tar -czvf ./artifacts/test.txt.tar.gz ./*.txt
+          echo "strDate=$(TZ=UTC-8 date +%Y-%m-%d)" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -37,13 +38,19 @@ jobs:
           draft: false
           prerelease: false
           files: ./artifacts/*.tar.gz
+      
+      - name: get_tag
+        if: github.event_name == 'push'
+        id: get_tag
+        run: |
+          echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
       - name: if_push
         if: github.event_name == 'push'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref.split('/')[2] }}
+          tag_name: ${{ github.ref.replace('refs/tags/', '') }}
+          name: Release ${{ get_tag.outputs.tag }}
           draft: false
           prerelease: false
           files: ./artifacts/*.tar.gz
