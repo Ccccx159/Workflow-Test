@@ -1,0 +1,51 @@
+name: AutoBuild-Test
+
+on:
+  schedule:
+    - cron: 0/5 * * * *
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  build_test:
+    name: Build Test Archive
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: archive all files
+        run: |
+          mkdir -p ./artifacts
+          tar -czvf ./artifacts/test.img.tar.gz ./*.jpg
+          tar -czvf ./artifacts/test.txt.tar.gz ./*.txt
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./artifacts/firmware/*.gz
+
+      - name: if_schedule
+        if: github.event.schedule
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.sha }}
+          name: '每周自动构建'
+          body: 每周自动构建
+          draft: false
+          prerelease: false
+          files: ./artifacts/*.tar.gz
+
+      - name: if_push
+        if: github.event.push
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          files: ./artifacts/*.tar.gz
