@@ -25,7 +25,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: ./artifacts/firmware/*.gz
+          path: ./artifacts/*.gz
 
       - name: if_schedule
         if: github.event.schedule
