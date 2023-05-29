@@ -23,6 +23,11 @@ jobs:
     name: Build Test Archive
     runs-on: ubuntu-latest
     steps:
+      - name: update env
+        run: |
+          sudo apt -y update
+          sudo apt full-upgrade -y
+
       - name: checkout source
         uses: actions/checkout@v2
 
@@ -35,7 +40,6 @@ jobs:
           else
             echo "error"
           fi
-
       - name: archive all files
         run: |
           mkdir -p ./artifacts
