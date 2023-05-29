@@ -9,10 +9,11 @@ on:
   workflow_dispatch:
     inputs:
       platform:
+        type: choice
         description: 'Selet the platform to build'
-        required: true
-        default: 'x86'
-        options: ['x86', 'r2s']
+        options: 
+          - 'x86'
+          - 'r2s'
 
 permissions:
   contents: write
@@ -27,9 +28,9 @@ jobs:
 
       - name: run build script
         run: |
-          if [[ "${{ github.event.inputs.option }}" == "x86" ]]; then
+          if [[ "${{ github.event.inputs.platform }}" == "x86" ]]; then
             echo "now compiling x86"
-          elif [[ "${{ github.event.inputs.option }}" == "r2s" ]]; then
+          elif [[ "${{ github.event.inputs.platform }}" == "r2s" ]]; then
             echo "now compiling r2s"
           else
             echo "error"
@@ -38,8 +39,8 @@ jobs:
       - name: archive all files
         run: |
           mkdir -p ./artifacts
-          tar -czvf ./artifacts/test.img.${{ github.event.inputs.option }}.tar.gz ./*.jpg
-          tar -czvf ./artifacts/test.txt.${{ github.event.inputs.option }}.tar.gz ./*.txt
+          tar -czvf ./artifacts/test.img.${{ github.event.inputs.platform }}.tar.gz ./*.jpg
+          tar -czvf ./artifacts/test.txt.${{ github.event.inputs.platform }}.tar.gz ./*.txt
           echo "strDate=$(TZ=UTC-8 date +%Y-%m-%d)" >> $GITHUB_ENV
 
       - name: Upload artifacts
